@@ -18,6 +18,7 @@
 		B3290922206A34B3003B4E32 /* OneClockVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3290921206A34B3003B4E32 /* OneClockVC.swift */; };
 		B3358581215CC103009BB88C /* GenericsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3358580215CC103009BB88C /* GenericsViewController.swift */; };
 		B3358584215DC4B3009BB88C /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B392B3B720844546004B6530 /* Info.plist */; };
+		B33585AE215E27A0009BB88C /* SwiftNewFeatureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33585AD215E27A0009BB88C /* SwiftNewFeatureViewController.swift */; };
 		B3373644207B7C2900AD9AFB /* UsageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3373643207B7C2900AD9AFB /* UsageVC.swift */; };
 		B33F214E2148EF130022DCA5 /* CodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33F214D2148EF130022DCA5 /* CodeViewController.swift */; };
 		B33F21512148EF760022DCA5 /* CodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33F214F2148EF760022DCA5 /* CodeView.swift */; };
@@ -85,6 +86,7 @@
 		B329091F206A1E78003B4E32 /* CAReplicatorLayerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CAReplicatorLayerVC.swift; sourceTree = "<group>"; };
 		B3290921206A34B3003B4E32 /* OneClockVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneClockVC.swift; sourceTree = "<group>"; };
 		B3358580215CC103009BB88C /* GenericsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericsViewController.swift; sourceTree = "<group>"; };
+		B33585AD215E27A0009BB88C /* SwiftNewFeatureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNewFeatureViewController.swift; sourceTree = "<group>"; };
 		B3373643207B7C2900AD9AFB /* UsageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageVC.swift; sourceTree = "<group>"; };
 		B33F214D2148EF130022DCA5 /* CodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeViewController.swift; sourceTree = "<group>"; };
 		B33F214F2148EF760022DCA5 /* CodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodeView.swift; sourceTree = "<group>"; };
@@ -205,6 +207,7 @@
 				B33F21502148EF760022DCA5 /* AsunBasicAttributes.swift */,
 				B33F214F2148EF760022DCA5 /* CodeView.swift */,
 				B3358580215CC103009BB88C /* GenericsViewController.swift */,
+				B33585AD215E27A0009BB88C /* SwiftNewFeatureViewController.swift */,
 				B30422ED206A39E8002D7524 /* Animation */,
 				B30422EC206A39B9002D7524 /* CALayer */,
 				B3290911206A12B9003B4E32 /* Main.storyboard */,
@@ -383,6 +386,7 @@
 				B37CB74F20AC17DA00295BD8 /* CalendarViewController.swift in Sources */,
 				B392B3D920844546004B6530 /* ConstraintRelatableTarget.swift in Sources */,
 				B392B3DC20844546004B6530 /* ConstraintLayoutGuide+Extensions.swift in Sources */,
+				B33585AE215E27A0009BB88C /* SwiftNewFeatureViewController.swift in Sources */,
 				B392B3BD20844546004B6530 /* LayoutConstraintItem.swift in Sources */,
 				B392B3D220844546004B6530 /* ConstraintMaker.swift in Sources */,
 				B392B3C520844546004B6530 /* ConstraintDSL.swift in Sources */,

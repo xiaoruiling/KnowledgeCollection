@@ -46,6 +46,7 @@ class ViewController: UIViewController {
       TestData(title: "Regular Test", vc: RegularViewController.self),
       TestData(title: "code", vc: CodeViewController.self),
       TestData(title: "Generics Test", vc: GenericsViewController.self),
+      TestData(title: "Swift 4.2 新特性 Test", vc: SwiftNewFeatureViewController.self),
       TestData(title: "未完待续", vc: UIViewController.self)]
   }
 }
