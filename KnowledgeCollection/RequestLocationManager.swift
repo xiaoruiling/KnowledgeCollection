@@ -43,10 +43,6 @@ class RequestLocationManager: NSObject {
         // 开始连续定位
         locationManager.startUpdatingLocation()
         locationManager.delegate = self
-    
-        
-        // test
-        testDidUpdateLocations()
         
     }
     
