@@ -54,10 +54,10 @@ iTunes 同步时会备份该文件夹。
 /Library/Preferences 保存应用程序的偏好设置文件（使用 NSUserDefaults 类设置时创建。不应该手动创建）。
 /tmp/ 保存应用执行时所须要的暂时数据，iphone 重新启动时，会清除该文件夹下全部文件。
 
-> FileManager: 使用 FileManager 能够对沙盒中的文件夹、文件进行操作。通过例如以下方式能够获取 NSFileManager 的单例：
->
-> Bundle: iOS 应用都是通过 bundle 进行封装的，能够狭隘地将 bundle 理解为上述沙盒中的 AppName.app 文件。在 Finder 中，会把 bundle 当做一个文件显示从而防止用户误操作导致程序
-> 文件损坏。但事实上内部是一个文件夹，包括了图像、媒体资源、编译好的代码、nib 文件等。这个文件夹称为 main bundle。
+FileManager: 使用 FileManager 能够对沙盒中的文件夹、文件进行操作。通过例如以下方式能够获取 NSFileManager 的单例：
+
+Bundle: iOS 应用都是通过 bundle 进行封装的，能够狭隘地将 bundle 理解为上述沙盒中的 AppName.app 文件。在 Finder 中，会把 bundle 当做一个文件显示从而防止用户误操作导致程序文件损坏。但事实上内部是一个文件夹，包括了图像、媒体资源、编译好的代码、nib 文件等。这个文件夹称为 main bundle。
+
 
 # SwiftUI
 
@@ -70,11 +70,22 @@ iTunes 同步时会备份该文件夹。
 
 2. 在SwiftUI 项目中使用 原生的View
 
-3. SwiftUI 使用 State 关键字来标记 变化的属性, 被标记的属性值发生变化,就会更新 View
+3. SwiftUI 使用 ```State``` 关键字来标记 变化的属性, 被标记的属性值发生变化,就会更新 ```View```
+   state: 存储属性的状态值,可以传给子视图的时候,如果当前视图的值改变,但是传递给的子视图的值是不会变的
+   binding: 跟state 作用一样,但是,唯一的区别是,传递给子视图之后, 如果当前的视图值改变,那么传递给的子视图的值也会改变,但是需要用```$```这个来取值
+   
+    SceneStorage: 
 
 4. 传值: 声明一个可变属性就可以, 
 
 5. 使用循环的时候, 要定一个 id
+
+6. Previews in Xcode: Platform/Device/interfaceOrientation
+
+7. ObservalbleObject: 定义一个可被用于 publish 的对对象,此时被观察对象包含的属性要用 ```@Published``` 修饰, 不想被观察的则正常定义即可.
+   @ObservedObject: 修饰可被观察的对象, 这个对象也可以传递给子视图,赋值给子视图的同样的一个被@ObservedObject修饰的此对象,当对象的属性发生变化的时候,当前视图及相关的子视图都会发生变化.
+   
+
 
 
 
