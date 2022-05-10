@@ -1,0 +1,65 @@
+
+
+import UIKit
+
+// swift
+@objc class FPSMonitor: NSObject {
+    private var timer: Timer?
+    private var link: CADisplayLink?
+    private var count: UInt = 0
+    private var lastTime: TimeInterval = 0
+    
+    fileprivate lazy var label: UILabel = {
+        let label = UILabel(frame: CGRect(x: 0,
+                                          y: 100,
+                                          width: 100,
+                                          height: 20))
+        label.textColor = .red
+        label.backgroundColor = .white.withAlphaComponent(0.1)
+        return label
+    }()
+
+      @objc func enableMonitor() {
+        if link == nil {
+            UIApplication.shared.windows.last?.addSubview(label)
+            link = CADisplayLink(target: self, selector: #selector(fpsInfoCalculate(_:)))
+            link?.add(to: RunLoop.main, forMode: .common)
+            
+        } else {
+            link?.isPaused = false
+        }
+        
+        
+    }
+
+    func disableMonitor() {
+        if let link = link {
+            link.isPaused = true
+            link.invalidate()
+            self.link = nil
+            lastTime = 0
+            count = 0
+            label.removeFromSuperview()
+        }
+    }
+    
+    @objc
+    func fpsInfoCalculate(_ link: CADisplayLink) {
+        if lastTime == 0 {
+            lastTime = link.timestamp
+            return
+        }
+        count += 1
+        let delta = link.timestamp - lastTime
+        if delta >= 1 {
+            // 间隔超过 1 秒
+            lastTime = link.timestamp
+            let fps = Double(count) / delta
+            count = 0
+
+            let intFps = Int(fps + 0.5)
+            label.text = "帧率：\(intFps)"
+            print("帧率：\(intFps)")
+        }
+    }
+}
