@@ -1,0 +1,197 @@
+//
+//  EventStoreManager.swift
+//  MapCallouts
+//
+//  Created by liruiling on 2022/5/27.
+//  Copyright © 2022 Apple. All rights reserved.
+//
+
+import EventKit
+import EventKitUI
+
+enum EventResultCustomError {
+    case success
+    case accessfailure(errorType: EventAccessErrorType)
+    case failure(errorType: EventErrorType)
+}
+
+enum EventAccessErrorType {
+    case calendarAccessDenied
+    case calendarAccessRestricted
+}
+
+enum EventErrorType {
+    case eventNotAddedToCalendar
+    case eventAlreadyExistsInCalendar
+}
+
+typealias EventsCalendarManagerResponse = (_ result: EventResultCustomError) -> Void
+
+class EventStoreManager: NSObject {
+    
+    static let shared = EventStoreManager()
+    
+    // 这个要是蛋例
+    static let eventStore: EKEventStore = EKEventStore()
+    
+    var alarms: [[EKAlarm]?] = []
+    var reminders: [EKReminder] = []
+    
+    override init() {
+        
+    }
+    
+    func isValiarAboutEvent() -> Bool {
+        return authorizationStatusAboutEvent()
+    }
+    
+    func isavaliableAboutReminder() -> Bool {
+        return authorizationStatusAboutReminder()
+    }
+    
+    func presentEventEditViewController() -> EKEventEditViewController {
+        let event = EKEvent(eventStore: EventStoreManager.eventStore)
+        event.title = "创建日程"
+        event.notes = "我要创建一个日程"
+        event.startDate = Date()
+        event.location = "北京"
+        event.endDate = Date(timeIntervalSinceNow: 30 * 60)
+        event.calendar = EventStoreManager.eventStore.defaultCalendarForNewEvents
+        let eventController = EKEventEditViewController()
+        eventController.eventStore = EventStoreManager.eventStore
+        eventController.event = event
+        eventController.editViewDelegate = self
+        eventController.modalPresentationStyle = .fullScreen
+        return eventController
+    }
+    
+    func addRedminder() {
+        
+        guard let calendar = EventStoreManager.eventStore.defaultCalendarForNewReminders() else { return }
+        let reminder = EKReminder(eventStore: EventStoreManager.eventStore)
+
+        reminder.calendar = calendar
+        reminder.title = "今天的提醒, 年少有为"
+        let greg = Calendar(identifier: .gregorian)
+        reminder.startDateComponents = greg.dateComponents([.year, .month, .day], from: Date().advanced(by: 60*60*24))
+        let latitude = 30.7333
+        let longitude = 76.7794
+        let structuredLocation = EKStructuredLocation(title: "中国")
+        structuredLocation.geoLocation = CLLocation(latitude: latitude, longitude: longitude)
+        // absoluteDate : 设置提醒时间
+        let alarm = EKAlarm(absoluteDate: Date(timeIntervalSinceNow: 2*60))
+        alarm.structuredLocation = structuredLocation
+        // A value indicating whether an alarm is triggered by entering or exiting a geofence.
+        alarm.proximity = .enter
+        reminder.addAlarm(alarm)
+        do {
+            try EventStoreManager.eventStore.save(reminder, commit: true)
+        } catch {
+           debugPrint("添加失败")
+        }
+    }
+    
+    private func authorizationStatusAboutEvent() -> Bool {
+        debugPrint("event---------: \(EKEventStore.authorizationStatus(for: .event))")
+        switch EKEventStore.authorizationStatus(for: .event) {
+        case .authorized: // 认证通过
+            return true
+        case .denied: // 被拒绝或者弹出提示后,意外关闭等情况时,再次运行会是这个状态
+            return false
+        case .notDetermined:  // notDetermined 第一次安装时,未设置时
+            var isGreanted: Bool = false
+            EventStoreManager.eventStore.requestAccess(to: .event, completion: { (granted: Bool, error: Error?) in
+                isGreanted = granted
+            })
+            return isGreanted
+        case .restricted: //这用户未被授权,即用户低于一定年龄无法给予授权，或者设备本身版本过低, 及用户无法使用此功能
+            return false
+        default:
+            return false
+        }
+    }
+    
+    private func authorizationStatusAboutReminder() -> Bool {
+        debugPrint("reminder---------: \(EKEventStore.authorizationStatus(for: .reminder))")
+        switch EKEventStore.authorizationStatus(for: .reminder) {
+        case .authorized: // 认真通过
+            return true
+        case .denied:
+            return false
+        case .notDetermined: // notDetermined 第一次安装时,未设置时
+            var isGreanted: Bool = false
+            EventStoreManager.eventStore.requestAccess(to: .reminder, completion: { (granted: Bool, error: Error?) in
+                isGreanted = granted
+            })
+            return isGreanted
+        case .restricted: //这用户未被授权,即用户低于一定年龄无法给予授权，或者设备本身版本过低, 及用户无法使用这个功能
+            return false
+        default:
+            return false
+        }
+    }
+}
+
+extension EventStoreManager {
+    
+    private func requestAccess(completion: @escaping EKEventStoreRequestAccessCompletionHandler) {
+        // 获取所有的日程数据
+        EventStoreManager.eventStore.requestAccess(to: .event) { (granted, error) in
+              
+          }
+        
+        // 获取所有的提醒数据
+        EventStoreManager.eventStore.requestAccess(to: .reminder) { granted, error in
+            // Handle the response to the request.
+        }
+        
+        let predicate = EventStoreManager.eventStore.predicateForReminders(in: nil)
+        EventStoreManager.eventStore.fetchReminders(matching: predicate, completion: {(reminders: [Any]?) in
+            if let reminders = reminders as? [EKReminder] {
+                // Filter reminders for the location ones.
+              let alarms = reminders.filter({ !$0.title.isEmpty }).map({ $0.alarms })
+                self.reminders = reminders
+                self.alarms = alarms
+            }
+        })
+      }
+    // Indicates whether a reminder is a location-based one.
+    var isLocation: Bool {
+        // alarms 是双重循环数组, 此时只拿第一个做测试
+        guard let alarms = self.alarms[0] else { return false }
+
+        return !alarms.filter({(alarm: EKAlarm) in
+            return (alarm.structuredLocation != nil) && ((alarm.proximity == .enter) || (alarm.proximity == .leave))
+        }).isEmpty
+    }
+
+    // - Returns: An array of reminders sorted by title in an ascending order.
+   func sortedByTitle() -> [EKReminder] {
+       return self.reminders.sorted(by: { (first: EKReminder, second: EKReminder) in
+           first.title.localizedCaseInsensitiveCompare(second.title) == .orderedAscending
+       })
+   }
+}
+
+extension EventStoreManager: EKEventEditViewDelegate {
+    func eventEditViewController(_ controller: EKEventEditViewController, didCompleteWith action: EKEventEditViewAction) {
+        switch action {
+        case .saved:
+            if let event = controller.event {
+                _ = try? controller.eventStore.save(event, span: .thisEvent)
+            }
+        case .deleted:
+            if let event = controller.event {
+                _ = try? controller.eventStore.remove(event, span: .thisEvent)
+            }
+        default:
+            break
+        }
+        
+        controller.dismiss(animated: true)
+    }
+    
+    func eventEditViewControllerDefaultCalendar(forNewEvents controller: EKEventEditViewController) -> EKCalendar {
+        return controller.eventStore.defaultCalendarForNewEvents ?? EKCalendar()
+    }
+}
