@@ -119,12 +119,12 @@ struct CommonView: UIViewRepresentable {
     
 }
    ```
-   
    UIViewController 等 同理
-   
+ 
+ 
 9. 
    
-
+   
 # RXSwift
 
 1. cell 重用时, 导致重复订阅问题解决办法
